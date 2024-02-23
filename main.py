@@ -24,6 +24,7 @@ root = tk.Tk()
 root.withdraw() #Hides root window
 
 dirs = []
+dir_filename = {}
 
 #Ask the user to select multiple directories and store them in dirs
 while True:
@@ -64,15 +65,11 @@ if dirs:
 
                 if start_frame is None:
                     cropped_trials.append(filename)
+                    data.append({'Directory': directory, 'Trials starting after 0 frames': ', '.join(cropped_trials)})
                 else:
                     zero_frame_trials.append(filename)
-                
-        #append the sorted lists to the data
-        data.append({
-            'Directory': directory,
-            'Trials starting at 0 frames': ', '.join(zero_frame_trials),
-            'Trials starting after 0 frames': ', '.join(cropped_trials)
-        })
+                    data.append({'Directory': directory, 'Trials starting at 0 frames': ', '.join(zero_frame_trials)})
+            
 
     #DataFrame from data
     df = pd.DataFrame(data)
@@ -80,7 +77,15 @@ if dirs:
     #Ask the user to specify name and file location for excel file
     excel_file_path = filedialog.asksaveasfilename(defaultextension='.xlsx', filetypes=[("Excel files", "*.xlsx")])
 
-                
+    #Write DataFram to excel
+
+    if excel_file_path:
+        df.to_excel(excel_file_path, index=False)
+        print("Excel Saved Success")
+    else:
+        print("No File selected")
+
+
 
 
                 
