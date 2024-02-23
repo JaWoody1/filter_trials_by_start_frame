@@ -39,6 +39,10 @@ while True:
     else:
         break
 
+    #get directories from main directory
+
+    
+
 print (dirs)
 
 #Main loop to iterate through each file
