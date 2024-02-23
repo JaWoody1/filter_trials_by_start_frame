@@ -69,10 +69,10 @@ if dirs:
 
                 if start_frame is None:
                     cropped_trials.append(filename)
-                    data.append({'Directory': directory, 'Trials starting after 0 frames': ', '.join(cropped_trials)})
+                    data.append({'Directory': directory, 'Trials starting after 0 frames': ''.join(filename)})
                 else:
                     zero_frame_trials.append(filename)
-                    data.append({'Directory': directory, 'Trials starting at 0 frames': ', '.join(zero_frame_trials)})
+                    data.append({'Directory': directory, 'Trials starting at 0 frames': ''.join(filename)})
             
 
     #DataFrame from data
