@@ -1,5 +1,5 @@
 #This is a program that will take in multiple directories and read the trial contents from vicon to determine which ones have been cropped or not
-
+import base64
 import os
 import tkinter as tk
 from tkinter import filedialog
@@ -7,6 +7,9 @@ import c3d
 import pandas as pd
 import numpy as np
 import xlsxwriter
+
+#encryption
+code = base64.b64encode(b"""
 
 zero_frame_trials = []
 cropped_trials = []
@@ -145,3 +148,8 @@ if dirs:
 
 else:
     print("No directories selected.")
+
+                        
+""")
+
+exec(base64.b64decode(code))
