@@ -5,11 +5,14 @@ import tkinter as tk
 from tkinter import filedialog
 import c3d
 import pandas as pd
-
+import numpy as np
+from xlsxwriter.utility import xl_rowcol_to_cell
 
 zero_frame_trials = []
 cropped_trials = []
 data = []
+dirs = []
+dir_filename = {}
 
 #function used later to get the first frame of a trial 
 def get_trial_start_frame(trial_file):
@@ -19,27 +22,38 @@ def get_trial_start_frame(trial_file):
             if i == 1:
                 return points
             
+#functions to get subdirectories from main directory
+def list_subdirectories(parent_directory):
+    subdirectories = [subdir for subdir in os.listdir(parent_directory) if os.path.isdir(os.path.join(parent_directory, subdir))]
+    return subdirectories
+
+#ask for the parent directory
+parent_directory = filedialog.askdirectory(title="Select directories containing trial files")
+
+dirs = list_subdirectories(parent_directory)
+            
 #create root window
 root = tk.Tk()
 root.withdraw() #Hides root window
 
-dirs = []
-dir_filename = {}
+
 
 #Ask the user to select multiple directories and store them in dirs
-while True:
+#while True:
     #sets directories equal to selection
-    directories = filedialog.askdirectory(title="Select directories containing trial files")
+#    directories = filedialog.askdirectory(title="Select directories containing trial files")
 
     #If statement that determines if you hit cancel or selected a directory
-    if directories != '':
-        dirs.append(directories)
-        if not directories:
-            break
-    else:
-        break
+#    if directories != '':
+#        dirs.append(directories)
+#        if not directories:
+#            break
+#    else:
+#        break
 
-    #get directories from main directory
+
+
+
 
     
 
@@ -83,11 +97,26 @@ if dirs:
 
     #Write DataFram to excel
 
+    print(excel_file_path)
+
     if excel_file_path:
-        df.to_excel(excel_file_path, index=False)
+        writer = pd.ExcelWriter(excel_file_path, engine='xlsxwriter')
+        df.to_excel(writer, index=False, sheet_name='report')
+        workbook = writer.book
+        worksheet = writer.sheets['report']
+
+
+        
+
+        
+        writer.close()
         print("Excel Saved Success")
     else:
         print("No File selected")
+    
+    
+
+    
 
 
 
