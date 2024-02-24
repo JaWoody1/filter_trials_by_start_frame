@@ -13,6 +13,7 @@ cropped_trials = []
 data = []
 dirs = []
 dir_filename = {}
+longest_string_a = 0
 
 #function used later to get the first frame of a trial 
 def get_trial_start_frame(trial_file):
@@ -21,6 +22,17 @@ def get_trial_start_frame(trial_file):
         for i, points, analog in c3d_data.read_frames():
             if i == 1:
                 return points
+            
+#function to find starting frame
+def get_first_frame(trial_file):
+    with open(trial_file, 'rb') as f:
+        c3d_data = c3d.Reader(f)
+        for i, points, analog in c3d_data.read_frames():
+
+            if points is None:
+                continue
+            else:
+                return i
             
 #functions to get subdirectories from main directory
 def list_subdirectories(parent_directory):
@@ -36,58 +48,53 @@ dirs = list_subdirectories(parent_directory)
 root = tk.Tk()
 root.withdraw() #Hides root window
 
-
-
-#Ask the user to select multiple directories and store them in dirs
-#while True:
-    #sets directories equal to selection
-#    directories = filedialog.askdirectory(title="Select directories containing trial files")
-
-    #If statement that determines if you hit cancel or selected a directory
-#    if directories != '':
-#        dirs.append(directories)
-#        if not directories:
-#            break
-#    else:
-#        break
-
-
-
-
-
-    
-
-print (dirs)
-
+############################################################################################################
 #Main loop to iterate through each file
 if dirs:
     for directory in dirs:
         
+        #get longest directory name
+        if len(directory) >= longest_string_a:
+            longest_string_a = len(directory)
+
         #Lists to store trials starting at 0 frames and trials starting at >0 frames
         
 
         #Now that we'er in a directory go through each file 
         for filename in os.listdir(directory):
+
+            
+
             #find the files that end with .c3d
             if filename.endswith(".c3d"):
                 file_path = os.path.join(directory, filename)
 
                 #run our file through get trial start frame
-                start_frame = get_trial_start_frame(file_path)
+                first_info = get_trial_start_frame(file_path)
+                start_frame = get_first_frame(file_path)
 
                 #test
-                print(start_frame)
+                print(first_info)
 
                 #deciding which list to put the file in
-
-
-                if start_frame is None:
+                if first_info is None:
                     cropped_trials.append(filename)
-                    data.append({'Directory': directory, 'Trials starting after 0 frames': ''.join(filename)})
+                    data.append({'Directory': directory, 'Start Frame': start_frame, 'Clipped Trials': ''.join(filename)})
+
+                    #getting the size of the column
+                    longest_string_b = 14
+                    if len(filename) >= longest_string_b:
+                        longest_string_b = len(filename)
                 else:
                     zero_frame_trials.append(filename)
-                    data.append({'Directory': directory, 'Trials starting at 0 frames': ''.join(filename)})
+                    data.append({'Directory': directory, 'Start Frame': start_frame, 'Full Length Trials': ''.join(filename)})
+                    
+                    #getting the size of the column
+                    longest_string_c = len('Full Length Trials')
+                    if len(filename) >= longest_string_c:
+                        longest_string_c = len(filename)
             
+                 
 
     #DataFrame from data
     df = pd.DataFrame(data)
@@ -97,13 +104,24 @@ if dirs:
 
     #Write DataFram to excel
 
-    print(excel_file_path)
+    print(data)
 
     if excel_file_path:
+        #Create a writer object to be able to use xlsxwriter
         writer = pd.ExcelWriter(excel_file_path, engine='xlsxwriter')
+        #create mandatory sheet for our dataframe
         df.to_excel(writer, index=False, sheet_name='report')
         workbook = writer.book
         worksheet = writer.sheets['report']
+
+        #custom parameters for our worksheet
+
+        #max_length = max(len(str(value)) for value in data['Directory'])
+        
+        worksheet.set_column('A:A', longest_string_a+5)
+        worksheet.set_column('C:C', longest_string_b+5)
+        worksheet.set_column('D:D', longest_string_c+5)
+        worksheet.set_column('B:B', len('Start Frame')+5)
 
 
         
