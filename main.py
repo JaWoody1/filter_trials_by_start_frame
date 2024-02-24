@@ -6,7 +6,7 @@ from tkinter import filedialog
 import c3d
 import pandas as pd
 import numpy as np
-from xlsxwriter.utility import xl_rowcol_to_cell
+import xlsxwriter
 
 zero_frame_trials = []
 cropped_trials = []
@@ -40,9 +40,10 @@ def list_subdirectories(parent_directory):
     return subdirectories
 
 #ask for the parent directory
-parent_directory = filedialog.askdirectory(title="Select directories containing trial files")
+parent_directory = filedialog.askdirectory(title="Select directory containing trial files")
 
-dirs = list_subdirectories(parent_directory)
+dirs = [x[0] for x in os.walk(parent_directory)]
+print(dirs)
             
 #create root window
 root = tk.Tk()
@@ -74,7 +75,7 @@ if dirs:
                 start_frame = get_first_frame(file_path)
 
                 #test
-                print(first_info)
+                #print(first_info)
 
                 #deciding which list to put the file in
                 if first_info is None:
@@ -144,5 +145,3 @@ if dirs:
 
 else:
     print("No directories selected.")
-
-print (f'{zero_frame_trials}{cropped_trials}')
