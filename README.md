@@ -8,10 +8,13 @@ Steps to install python and run this script:
 Download python https://www.python.org/downloads/
 
 Set Python PATH: C:\Users\YourUsername\AppData\Local\Programs\Python\PythonXX
+
 Set Python Pip PATH: C:\Users\YourUsername\AppData\Local\Programs\Python\PythonXX\Scripts
 
 open cmd prompt and navigate to directory of main.py
+
 run 'pip install -r requirements.txt'
+
 run 'python main.py'
 
 
