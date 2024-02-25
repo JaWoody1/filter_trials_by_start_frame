@@ -46,7 +46,7 @@ def list_subdirectories(parent_directory):
     return subdirectories
 
 #ask for the parent directory
-parent_directory = filedialog.askdirectory(title="Select directory containing trial files")
+parent_directory = filedialog.askdirectory(title="Select directory containing participant folders")
 
 dirs = [x[0] for x in os.walk(parent_directory)]
 print(dirs)
