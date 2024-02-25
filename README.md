@@ -6,6 +6,7 @@ It will ask you to save an .xlsx file which contains the files sorted and their 
 Steps to install python and run this script:
 
 Download python https://www.python.org/downloads/
+
 Set Python PATH: C:\Users\YourUsername\AppData\Local\Programs\Python\PythonXX
 Set Python Pip PATH: C:\Users\YourUsername\AppData\Local\Programs\Python\PythonXX\Scripts
 
