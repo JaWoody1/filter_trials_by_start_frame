@@ -16,16 +16,9 @@ data = []
 dirs = []
 dir_filename = {}
 longest_string_a = 0
+longest_string_c = len('Full Length Trials')
+longest_string_d = len('Cropped Trials')
 
-
-# Function used later to get the first frame of a trial 
-def get_trial_start_frame(trial_file):
-    with open(trial_file, 'rb') as f:
-        c3d_data = c3d.Reader(f)
-        for i, points, analog in c3d_data.read_frames():
-            if i == 1:
-                return points
-            
 
 # Function to find starting frame
 def get_first_frame(trial_file):
@@ -37,6 +30,7 @@ def get_first_frame(trial_file):
                 continue
             else:
                 return i
+
 
 # Functions to get subdirectories from main directory
 def list_subdirectories(parent_directory):
@@ -72,31 +66,26 @@ if __name__ == '__main__':
                 if filename.endswith(".c3d"):
                     file_path = os.path.join(directory, filename)
 
-                    # Validates if there is information at the first frame
-                    #first_info = get_trial_start_frame(file_path)
-
                     # Returns the first frame that contains information
                     start_frame = get_first_frame(file_path)
 
                     # Deciding which list to put the file in depending on where the start frame is
-                    if start_frame == 1:
+                    if start_frame != 1:
                         cropped_trials.append(filename)
-                        data.append({'Directory': directory, 'Start Frame': start_frame, 'Full Length Trials': " ", 'Clipped Trials': ''.join(filename)})
+                        data.append({'Directory': directory, 'Start Frame': start_frame, 'Full Length Trials': " ", 'Cropped Trials': ''.join(filename)})
 
-                        # Getting the size of the column
-                        longest_string_d = 14
+                        # Getting the size of the column                        
                         if len(filename) >= longest_string_d:
-                            longest_string_d = len(filename)
+                            longest_string_d= len(filename)
                     
                     else:
                         zero_frame_trials.append(filename)
-                        data.append({'Directory': directory, 'Start Frame': start_frame, 'Full Length Trials': ''.join(filename), 'Clipped Trials': " "})
+                        data.append({'Directory': directory, 'Start Frame': start_frame, 'Full Length Trials': ''.join(filename), 'Cropped Trials': " "})
                         
-                        # Getting the size of the column
-                        longest_string_c = len('Full Length Trials')
+                        # Getting the size of the column                        
                         if len(filename) >= longest_string_c:
                             longest_string_c = len(filename)            
-                    
+                
                     
         print (data)
         # DataFrame from data
