@@ -18,6 +18,9 @@ dir_filename = {}
 longest_string_a = 0
 longest_string_c = len('Full Length Trials')
 longest_string_d = len('Cropped Trials')
+frame_list = []
+max_gap = []
+point_list = []
 
 
 # Function to find starting frame
@@ -30,8 +33,16 @@ def get_first_frame(trial_file):
                 continue
             else:
                 return i
+            
 
+# Function to find max gaps
+def get_max_gap(trial_file):
+    with open(trial_file, 'rb') as f:
+        c3d_data = c3d.Reader(f)
+        
+        return c3d_data.header.max_gap
 
+        
 # Functions to get subdirectories from main directory
 def list_subdirectories(parent_directory):
     subdirectories = [subdir for subdir in os.listdir(parent_directory) if os.path.isdir(os.path.join(parent_directory, subdir))]
@@ -69,25 +80,34 @@ if __name__ == '__main__':
                     # Returns the first frame that contains information
                     start_frame = get_first_frame(file_path)
 
+                    # Return the max gap for each file
+                    maximum_gap = get_max_gap(file_path)
+
                     # Deciding which list to put the file in depending on where the start frame is
                     if start_frame != 1:
                         cropped_trials.append(filename)
-                        data.append({'Directory': directory, 'Start Frame': start_frame, 'Full Length Trials': " ", 'Cropped Trials': ''.join(filename)})
-
+                        #Check to see if the file is a backup
+                        if "Backup" in directory or "BACKUP" in directory:
+                            data.append({'Directory': directory, 'Max Gap': maximum_gap, 'Start Frame': start_frame, 'Full Length Trials': " ", 'Cropped Trials': ''.join(filename), 'Backup': "Yes"})
+                        else:
+                            data.append({'Directory': directory, 'Max Gap': maximum_gap, 'Start Frame': start_frame, 'Full Length Trials': " ", 'Cropped Trials': ''.join(filename), 'Backup': "No"})
                         # Getting the size of the column                        
                         if len(filename) >= longest_string_d:
                             longest_string_d= len(filename)
                     
                     else:
                         zero_frame_trials.append(filename)
-                        data.append({'Directory': directory, 'Start Frame': start_frame, 'Full Length Trials': ''.join(filename), 'Cropped Trials': " "})
-                        
+                        #Check to see if the file is a backup
+                        if "Backup" in directory or "BACKUP" in directory:
+                            data.append({'Directory': directory, 'Start Frame': start_frame, 'Full Length Trials': ''.join(filename), 'Cropped Trials': " ", 'Backup': 'Yes'})
+                        else:
+                            data.append({'Directory': directory, 'Start Frame': start_frame, 'Full Length Trials': ''.join(filename), 'Cropped Trials': " ", 'Backup': 'No'})
                         # Getting the size of the column                        
                         if len(filename) >= longest_string_c:
                             longest_string_c = len(filename)            
                 
                     
-        print (data)
+        #print (data)
         # DataFrame from data
         df = pd.DataFrame(data)
         
